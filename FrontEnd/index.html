@@ -10,15 +10,17 @@
 	<meta name="description" content="">
 	<link rel="stylesheet" href="./assets/style.css">
 	<script src="./assets/script.js" defer></script> <!--defer pour qu'il se charge après le HTML-->
+	<script src="https://kit.fontawesome.com/78a38017a1.js" crossorigin="anonymous" defer></script>
 </head>
 <body>
+<div id="edition"></div>
 <header>
 	<h1>Sophie Bluel <span>Architecte d'intérieur</span></h1>
 	<nav>
 		<ul>
 			<li><a href="./index.html#portfolio">projets</a></li>
             <li><a href="./index.html#contact">contact</a></li>
-            <li><a href="#">login</a></li>
+            <li><a class="loginLink" id="logoutLink" href="./login.html">login</a></li>
 			<li><img src="./assets/icons/instagram.png" alt="Instagram"></li>
 		</ul>
 	</nav>
@@ -27,8 +29,10 @@
 	<section id="introduction">
 		<figure>
 			<img src="./assets/images/sophie-bluel.png" alt="">
+			<div class="editImage"></div>
 		</figure>
 		<article>
+			<div class="editArticle"></div>
 			<h2>Designer d'espace</h2>
 			<p>Je raconte votre histoire, je valorise vos idées. Je vous accompagne de la conception à la livraison finale du chantier.</p>
 			<p>Chaque projet sera étudié en commun, de façon à mettre en valeur les volumes, les matières et les couleurs dans le respect de l’esprit des lieux et le choix adapté des matériaux. Le suivi du chantier sera assuré dans le souci du détail, le respect du planning et du budget.</p>
@@ -36,7 +40,11 @@
 		</article>
 	</section>
 	<section id="portfolio">
+		<div class="titleWorks">
 		<h2>Mes Projets</h2>
+		<div class="editWorks">
+		</div>
+		</div>
 		<div class="btns-container">
 		</div>
 		<div class="gallery">

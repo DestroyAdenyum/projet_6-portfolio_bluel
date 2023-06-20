@@ -101,6 +101,73 @@ const createWorks = (works) => {
     });
 }
 
+const connected = () => {
+    let token = sessionStorage.getItem('token');
+    
+    const editionElement = document.querySelector('#edition');
+    const editImage = document.querySelector('.editImage');
+    const editArticle = document.querySelector('.editArticle');
+    const editWorks = document.querySelector('.editWorks');
+
+    if (token) {
+        const editionIcon = document.createElement('i');
+        editionIcon.classList.add("fa-sharp","fa-regular","fa-pen-to-square");
+        const editionText = document.createElement('p');
+        editionText.textContent = "Mode édition";
+
+        const publishButton = document.createElement('button');
+        publishButton.classList.add('btn-publish');
+        publishButton.textContent = "publier les changements";
+
+        editionElement.appendChild(editionIcon)
+        editionElement.appendChild(editionText)
+        editionElement.appendChild(publishButton)
+
+        const editIconImage = document.createElement('i');
+        editIconImage.classList.add("fa-sharp","fa-regular","fa-pen-to-square");
+        const editTextImage = document.createElement('p');
+        editTextImage.textContent = "modifier";
+
+        editImage.appendChild(editIconImage)
+        editImage.appendChild(editTextImage)
+
+        const editIconArticle = document.createElement('i');
+        editIconArticle.classList.add("fa-sharp","fa-regular","fa-pen-to-square");
+        const editTextArticle = document.createElement('p');
+        editTextArticle.textContent = "modifier";
+
+        editArticle.appendChild(editIconArticle)
+        editArticle.appendChild(editTextArticle)
+
+        const editIconWorks = document.createElement('i');
+        editIconWorks.classList.add("fa-sharp","fa-regular","fa-pen-to-square");
+        const editTextWorks = document.createElement('p');
+        editTextWorks.textContent = "modifier";
+
+        editWorks.appendChild(editIconWorks)
+        editWorks.appendChild(editTextWorks)
+
+        const loginLink = document.querySelector('.loginLink');
+        loginLink.textContent = "logout";
+
+        const logoutLink = document.querySelector('#logoutLink');
+        logoutLink.addEventListener('click', () => {
+            sessionStorage.removeItem('token');
+            window.location.href = './login.html';
+        })
+
+        const filtersWorks = document.querySelector('.btns-container');
+        filtersWorks.style.display = 'none';
+    } else {
+        editionElement.style.display = 'none';
+
+        editImage.style.display = 'none';
+
+        editArticle.style.display = 'none';
+
+        editWorks.style.display = 'none';
+    }
+}
 
 const init = async () => {
     // Attend que 'getWorks' et 'getCategories soient récupérés
@@ -109,6 +176,7 @@ const init = async () => {
     // et ensuite mettre les projets et les filtres en place
     createWorks(works);
     createButtonFilter(categories);
+    connected();
 }
 
 init()
