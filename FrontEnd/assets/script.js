@@ -1,10 +1,14 @@
 // Sélecteur de la div avec la classe "gallery"
 const galleryElement = document.querySelector('.gallery');
 const buttonContainerElement = document.querySelector('.btns-container');
+// Rajout session
+const mainModal = document.querySelector('#modal1');
+const mainModalGalleryElement = document.querySelector('.modal1-gallery');
 
 // Tableaux "works" et "categories" vides utilisés pour stocker les données de l'API
 let works = []
 let categories = []
+let mainModalOpened = false;
 
 // Fonction fetch pour récupérer les projets
 const getWorks = async () => {
@@ -101,61 +105,107 @@ const createWorks = (works) => {
     });
 }
 
+const createModalWorks = (works) => {
+    works.forEach(work => {
+        const figureElement = document.createElement('figure')
+        const imgElement = document.createElement('img');
+        const trashElement = document.createElement('span')
+
+        imgElement.src = work.imageUrl;
+        imgElement.classList.add('modal-img')
+
+        trashElement.textContent = 'pb'
+        trashElement.classList.add('trash')
+        trashElement.addEventListener('click', () => {
+            console.log('test', work.id)
+            // fonction de suppression, qui a probablement besoin de données comme l'id pour le delete en BDD
+        })
+
+        figureElement.classList.add('modal-figure')
+
+        figureElement.appendChild(imgElement)
+        figureElement.appendChild(trashElement)
+
+        mainModalGalleryElement.appendChild(figureElement)
+    })
+}
+
+
+// User connecté
 const connected = () => {
+    // Stockage du token
     let token = sessionStorage.getItem('token');
     
+    // Selecteurs des différents éléments HTML
     const editionElement = document.querySelector('#edition');
     const editImage = document.querySelector('.editImage');
     const editArticle = document.querySelector('.editArticle');
     const editWorks = document.querySelector('.editWorks');
 
     if (token) {
-        const editionIcon = document.createElement('i');
-        editionIcon.classList.add("fa-sharp","fa-regular","fa-pen-to-square");
-        const editionText = document.createElement('p');
-        editionText.textContent = "Mode édition";
+        const createButton = (text) => {
+            const button = document.createElement('button');
+            button.textContent = text;
+            return button;
+          };
+      
+          const createIcon = () => {
+            const icon = document.createElement('i');
+            icon.classList.add('fa-regular', 'fa-pen-to-square');
+            return icon;
+          };
+      
+          const createText = (content) => {
+            const text = document.createElement('p');
+            text.textContent = content;
+            return text;
+          };
+      
+          const editionButton = createButton();
+          editionButton.classList.add('btn-edition');
+          editionButton.appendChild(createIcon());
+          editionButton.appendChild(createText('Mode édition'));
+      
+          const publishButton = createButton('publier les changements');
+          publishButton.classList.add('btn-publish');
+      
+          editionElement.appendChild(editionButton);
+          editionElement.appendChild(publishButton);
+      
+          const editIconImage = createIcon();
+          const editTextImage = createText('modifier');
+          editImage.appendChild(editIconImage);
+          editImage.appendChild(editTextImage);
+      
+          const editIconArticle = createIcon();
+          const editTextArticle = createText('modifier');
+          editArticle.appendChild(editIconArticle);
+          editArticle.appendChild(editTextArticle);
+      
+          const editIconWorks = createIcon();
+          const editTextWorks = createText('modifier');
+          editWorks.appendChild(editIconWorks);
+          editWorks.appendChild(editTextWorks);
 
-        const publishButton = document.createElement('button');
-        publishButton.classList.add('btn-publish');
-        publishButton.textContent = "publier les changements";
+          editWorks.addEventListener('click', (e) => {
+            e.preventDefault()
+            if (mainModalOpened) return
+            mainModalOpened= true
+            mainModal.style.display = "flex"
+          })
 
-        editionElement.appendChild(editionIcon)
-        editionElement.appendChild(editionText)
-        editionElement.appendChild(publishButton)
-
-        const editIconImage = document.createElement('i');
-        editIconImage.classList.add("fa-sharp","fa-regular","fa-pen-to-square");
-        const editTextImage = document.createElement('p');
-        editTextImage.textContent = "modifier";
-
-        editImage.appendChild(editIconImage)
-        editImage.appendChild(editTextImage)
-
-        const editIconArticle = document.createElement('i');
-        editIconArticle.classList.add("fa-sharp","fa-regular","fa-pen-to-square");
-        const editTextArticle = document.createElement('p');
-        editTextArticle.textContent = "modifier";
-
-        editArticle.appendChild(editIconArticle)
-        editArticle.appendChild(editTextArticle)
-
-        const editIconWorks = document.createElement('i');
-        editIconWorks.classList.add("fa-sharp","fa-regular","fa-pen-to-square");
-        const editTextWorks = document.createElement('p');
-        editTextWorks.textContent = "modifier";
-
-        editWorks.appendChild(editIconWorks)
-        editWorks.appendChild(editTextWorks)
-
+        // Changement du texte "login"
         const loginLink = document.querySelector('.loginLink');
         loginLink.textContent = "logout";
 
+        // Création du lien de déconnexion
         const logoutLink = document.querySelector('#logoutLink');
         logoutLink.addEventListener('click', () => {
             sessionStorage.removeItem('token');
             window.location.href = './login.html';
         })
 
+        // Disparition des filtres
         const filtersWorks = document.querySelector('.btns-container');
         filtersWorks.style.display = 'none';
     } else {
@@ -169,14 +219,90 @@ const connected = () => {
     }
 }
 
+mainModal.querySelector('.close-button').addEventListener('click', () => {
+    closeModal(mainModal)
+})
+
+
+// MODALE 1 - EDITION GALERIE
+// const openModal = () => {
+//     const openModalLink = document.querySelector('.modal-open');
+
+//     openModalLink.addEventListener('click', () => {
+//         const displayModalOn = document.querySelector('.modal1');
+//         displayModalOn.classList.remove('modal1-off');
+//         createModalGallery(worksModal);
+
+//         // Ecoute du click sur la croix pour fermer
+//         const closeModalLink = document.querySelector('.fa-xmark');
+//         closeModalLink.addEventListener('click', closeModal);
+
+//         // Ecoute du click sur le bouton '+ ajouter photo'
+//         const openNewModal = document.querySelector('.modal1-add-button');
+//         openNewModal.addEventListener('click', openModalAdd);
+//     })
+
+// }
+
+// const closeModal = () => {
+//         const hideModal = document.querySelector('.modal1');
+//         hideModal.classList.add('.modal1-off');
+// }
+
+const closeModal = (modal) => {
+    if (modal.id === 'modal1') {
+        if (!mainModalOpened) return
+        mainModalOpened= false
+    }
+    modal.style.display = 'none';
+    modal.querySelector('.close-button').removeEventListener('click', () => closeModal(modal))
+}
+
+// let worksModal = works
+// const worksModalGallery = document.querySelector('.modal1-gallery');
+
+// Création de la galerie dynamiquement
+// const createModalGallery = (worksModal) => {
+//     worksModal.forEach(work => {
+//         const figureModalElement = document.createElement('figure');
+//         const imgModalElement = document.createElement('img');
+//         const removeElement = document.createElement('i');
+//         removeElement.classList.add('fa-solid', 'fa-trash-can');
+//         const moveElement = document.createElement('i');
+//         moveElement.classList.add('fa-solid', 'fa-arrows-up-down-left-right')
+//         const figcaptionModalElement = document.createElement('figcaption');
+
+//         imgModalElement.src = work.imageUrl;
+//         imgModalElement.alt = work.title;
+//         figcaptionModalElement.textContent = 'éditer';
+
+//         figcaptionModalElement.appendChild(imgModalElement);
+//         figcaptionModalElement.appendChild(figcaptionModalElement);
+//         worksModalGallery.appendChild(figureModalElement);
+//     })
+// }
+
+// const openModalAdd = () => {
+//     const hideFirstModal = document.querySelector('.modal1');
+//     hideFirstModal.classList.add('.modal1-off');
+
+//     const openModal2 = document.querySelector('.modal2');
+//     openModal2.classList.remove('.modal2-off');        
+// }
+
+
+// Initialisation de la page
 const init = async () => {
-    // Attend que 'getWorks' et 'getCategories soient récupérés
+    // Attend que 'getWorks' et 'getCategories' soient récupérés
     await getWorks();
     await getCategories();
-    // et ensuite mettre les projets et les filtres en place
+    // ensuite mettre les projets et les filtres en place,
     createWorks(works);
     createButtonFilter(categories);
+    // faire appel à la fonction "connecté"
     connected();
+    // openModal();
+    createModalWorks(works)
 }
 
 init()
