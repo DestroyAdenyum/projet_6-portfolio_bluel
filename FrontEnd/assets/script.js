@@ -107,29 +107,40 @@ const createWorks = (works) => {
 
 const createModalWorks = (works) => {
     works.forEach(work => {
-        const figureElement = document.createElement('figure')
+        const figureElement = document.createElement('figure');
         const imgElement = document.createElement('img');
-        const trashElement = document.createElement('span')
+        const figCaptionElement = document.createElement('figcaption');
+        const trashElement = document.createElement('span');
+        const trashIcon = document.createElement('i');
+        const arrowsElement = document.createElement('span');
+        const arrowsIcon = document.createElement('i');
+        
+        figureElement.classList.add('modal1-figure');
+        trashElement.classList.add('trash');
+        trashIcon.classList.add('fa-solid', 'fa-trash-can');
+        arrowsElement.classList.add('arrows')
+        arrowsIcon.classList.add('fa-solid', 'fa-arrows-up-down-left-right')
 
         imgElement.src = work.imageUrl;
-        imgElement.classList.add('modal-img')
+        imgElement.classList.add('modal1-img');
 
-        trashElement.textContent = 'pb'
-        trashElement.classList.add('trash')
+        figCaptionElement.textContent = 'éditer';
+
         trashElement.addEventListener('click', () => {
             console.log('test', work.id)
             // fonction de suppression, qui a probablement besoin de données comme l'id pour le delete en BDD
-        })
+        });
 
-        figureElement.classList.add('modal-figure')
+        figureElement.appendChild(imgElement);
+        figureElement.appendChild(figCaptionElement);
+        trashElement.appendChild(trashIcon);
+        arrowsElement.appendChild(arrowsIcon);
+        figureElement.appendChild(trashElement);
+        figureElement.appendChild(arrowsElement);
 
-        figureElement.appendChild(imgElement)
-        figureElement.appendChild(trashElement)
-
-        mainModalGalleryElement.appendChild(figureElement)
+        mainModalGalleryElement.appendChild(figureElement);
     })
 }
-
 
 // User connecté
 const connected = () => {
@@ -143,56 +154,12 @@ const connected = () => {
     const editWorks = document.querySelector('.editWorks');
 
     if (token) {
-        const createButton = (text) => {
-            const button = document.createElement('button');
-            button.textContent = text;
-            return button;
-          };
-      
-          const createIcon = () => {
-            const icon = document.createElement('i');
-            icon.classList.add('fa-regular', 'fa-pen-to-square');
-            return icon;
-          };
-      
-          const createText = (content) => {
-            const text = document.createElement('p');
-            text.textContent = content;
-            return text;
-          };
-      
-          const editionButton = createButton();
-          editionButton.classList.add('btn-edition');
-          editionButton.appendChild(createIcon());
-          editionButton.appendChild(createText('Mode édition'));
-      
-          const publishButton = createButton('publier les changements');
-          publishButton.classList.add('btn-publish');
-      
-          editionElement.appendChild(editionButton);
-          editionElement.appendChild(publishButton);
-      
-          const editIconImage = createIcon();
-          const editTextImage = createText('modifier');
-          editImage.appendChild(editIconImage);
-          editImage.appendChild(editTextImage);
-      
-          const editIconArticle = createIcon();
-          const editTextArticle = createText('modifier');
-          editArticle.appendChild(editIconArticle);
-          editArticle.appendChild(editTextArticle);
-      
-          const editIconWorks = createIcon();
-          const editTextWorks = createText('modifier');
-          editWorks.appendChild(editIconWorks);
-          editWorks.appendChild(editTextWorks);
-
-          editWorks.addEventListener('click', (e) => {
+        editWorks.addEventListener('click', (e) => {
             e.preventDefault()
             if (mainModalOpened) return
-            mainModalOpened= true
+            mainModalOpened = true
             mainModal.style.display = "flex"
-          })
+        })
 
         // Changement du texte "login"
         const loginLink = document.querySelector('.loginLink');
@@ -224,31 +191,6 @@ mainModal.querySelector('.close-button').addEventListener('click', () => {
 })
 
 
-// MODALE 1 - EDITION GALERIE
-// const openModal = () => {
-//     const openModalLink = document.querySelector('.modal-open');
-
-//     openModalLink.addEventListener('click', () => {
-//         const displayModalOn = document.querySelector('.modal1');
-//         displayModalOn.classList.remove('modal1-off');
-//         createModalGallery(worksModal);
-
-//         // Ecoute du click sur la croix pour fermer
-//         const closeModalLink = document.querySelector('.fa-xmark');
-//         closeModalLink.addEventListener('click', closeModal);
-
-//         // Ecoute du click sur le bouton '+ ajouter photo'
-//         const openNewModal = document.querySelector('.modal1-add-button');
-//         openNewModal.addEventListener('click', openModalAdd);
-//     })
-
-// }
-
-// const closeModal = () => {
-//         const hideModal = document.querySelector('.modal1');
-//         hideModal.classList.add('.modal1-off');
-// }
-
 const closeModal = (modal) => {
     if (modal.id === 'modal1') {
         if (!mainModalOpened) return
@@ -257,39 +199,6 @@ const closeModal = (modal) => {
     modal.style.display = 'none';
     modal.querySelector('.close-button').removeEventListener('click', () => closeModal(modal))
 }
-
-// let worksModal = works
-// const worksModalGallery = document.querySelector('.modal1-gallery');
-
-// Création de la galerie dynamiquement
-// const createModalGallery = (worksModal) => {
-//     worksModal.forEach(work => {
-//         const figureModalElement = document.createElement('figure');
-//         const imgModalElement = document.createElement('img');
-//         const removeElement = document.createElement('i');
-//         removeElement.classList.add('fa-solid', 'fa-trash-can');
-//         const moveElement = document.createElement('i');
-//         moveElement.classList.add('fa-solid', 'fa-arrows-up-down-left-right')
-//         const figcaptionModalElement = document.createElement('figcaption');
-
-//         imgModalElement.src = work.imageUrl;
-//         imgModalElement.alt = work.title;
-//         figcaptionModalElement.textContent = 'éditer';
-
-//         figcaptionModalElement.appendChild(imgModalElement);
-//         figcaptionModalElement.appendChild(figcaptionModalElement);
-//         worksModalGallery.appendChild(figureModalElement);
-//     })
-// }
-
-// const openModalAdd = () => {
-//     const hideFirstModal = document.querySelector('.modal1');
-//     hideFirstModal.classList.add('.modal1-off');
-
-//     const openModal2 = document.querySelector('.modal2');
-//     openModal2.classList.remove('.modal2-off');        
-// }
-
 
 // Initialisation de la page
 const init = async () => {
@@ -301,7 +210,6 @@ const init = async () => {
     createButtonFilter(categories);
     // faire appel à la fonction "connecté"
     connected();
-    // openModal();
     createModalWorks(works)
 }
 
