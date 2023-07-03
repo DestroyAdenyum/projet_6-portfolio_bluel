@@ -70,19 +70,22 @@
 			<!-- MODALE 2 -->
 			<aside id="modal2" class="modal2 modal2-off" aria-hidden="true" role="dialog">
 				<div class="modal2-wrapper">
-					<i class="fa-solid fa-xmark"></i>
-					<i class="fa-solid fa-arrow-left"></i>
+					<i class="fa-solid fa-xmark close-button"></i>
+					<i class="fa-solid fa-arrow-left return-button"></i>
 					<h3>Ajout photo</h3>
 					<div class="modal2-addimg">
-						<i class="fa-light fa-image"></i>
-						<button class="img-add-button">+ Ajouter photo</button>
-						<p>jpg png: 4mo max</p>
+						<i class="fa-sharp fa-regular fa-image"></i>
+						<div class="add-image-button">
+							<label for="add-image" class="img-add-button">+ Ajouter photo</label>
+							<input type="file" accept="image/jpg image/png" id="add-image"></input>
+						</div>
+						<p>jpg, png: 4mo max</p>
 					</div>
-					<form id="modal-form" action="#" method="post">
-						<label for="title">Titre</label>
-						<input type="text" name="title" id="title">
-						<label for="category">Catégorie</label>
-						<input type="text" name="category" id="category">
+					<form id="modal2-form" action="#" method="post">
+						<label for="modal2-img-title">Titre</label>
+						<input type="text" name="title" id="modal2-img-title">
+						<label>Catégorie</label>
+						<select class="categoriesModal"></select>
 					</form>
 					<div class="modal2-valid">
 						<button>Valider</button>

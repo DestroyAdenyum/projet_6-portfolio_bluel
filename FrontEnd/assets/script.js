@@ -4,11 +4,13 @@ const buttonContainerElement = document.querySelector('.btns-container');
 // Rajout session
 const mainModal = document.querySelector('#modal1');
 const mainModalGalleryElement = document.querySelector('.modal1-gallery');
+const secondModal = document.querySelector('#modal2');
 
 // Tableaux "works" et "categories" vides utilisés pour stocker les données de l'API
 let works = []
 let categories = []
 let mainModalOpened = false;
+let secondModalOpened = false;
 
 // Fonction fetch pour récupérer les projets
 const getWorks = async () => {
@@ -129,7 +131,30 @@ const createModalWorks = (works) => {
         trashElement.addEventListener('click', () => {
             console.log('test', work.id)
             // fonction de suppression, qui a probablement besoin de données comme l'id pour le delete en BDD
+            deleteWork();
         });
+
+        const deleteWork = async() => {
+            let token = sessionStorage.getItem('token');
+            let id = work.id;
+            let figureElementTrash = trashElement.closest('figure');
+            // closest = element le plus proche dans l'ascendance de l'élément
+
+            // appel de l'API pour l'id de chaque work
+            const response = await fetch(`http://localhost:5678/api/works/${id}`, {
+                // method DELETE pour supprimer un projet
+                method: "DELETE",
+                headers: {
+                    "Accept": "*/*",
+                    "Authorization": `Bearer ${token}`
+                }
+            })
+            if (response.ok) {
+                figureElementTrash.remove();
+                galleryElement.innerHTML = "";
+                await getWorks();
+            }
+        }
 
         figureElement.appendChild(imgElement);
         figureElement.appendChild(figCaptionElement);
@@ -186,15 +211,41 @@ const connected = () => {
     }
 }
 
+// sélection du bouton "ajouter photo" pour ouverture de la modale 2
+mainModal.querySelector('.modal1-add-button').addEventListener('click', () => {
+    openSecondModal(secondModal)
+})
+
+secondModal.querySelector('.return-button').addEventListener('click', () => {
+    returnMainModal(secondModal)
+})
+
+// selection de la croix pour la fermeture de la modale
 mainModal.querySelector('.close-button').addEventListener('click', () => {
     closeModal(mainModal)
 })
 
+secondModal.querySelector('.close-button').addEventListener('click', () => {
+    closeModal(secondModal)
+})
 
+const openSecondModal = (modal) => {
+    mainModal.style.display = 'none';
+    secondModal.style.display = 'flex';
+    modal.querySelector('.modal1-add-button').removeEventListener('click', () => openSecondModal(modal));
+    modal.querySelector('.close-button').addEventListener('click', () => closeModal(modal));
+}
+
+const returnMainModal = () => {
+    secondModal.style.display = 'none';
+    mainModal.style.display = 'flex';
+}
+
+// fonction de fermeture de la modale
 const closeModal = (modal) => {
     if (modal.id === 'modal1') {
         if (!mainModalOpened) return
-        mainModalOpened= false
+        mainModalOpened = false
     }
     modal.style.display = 'none';
     modal.querySelector('.close-button').removeEventListener('click', () => closeModal(modal))
@@ -210,7 +261,8 @@ const init = async () => {
     createButtonFilter(categories);
     // faire appel à la fonction "connecté"
     connected();
-    createModalWorks(works)
+    // insérer les projets dans la modale
+    createModalWorks(works);
 }
 
 init()
