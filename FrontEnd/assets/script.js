@@ -1,15 +1,17 @@
 // Sélecteur de la div avec la classe "gallery"
 const galleryElement = document.querySelector('.gallery');
 const buttonContainerElement = document.querySelector('.btns-container');
-// Rajout session
+
+// Sélecteurs modale 1
 const mainModal = document.querySelector('#modal1');
 const mainModalGalleryElement = document.querySelector('.modal1-gallery');
+// Sélecteurs modale 2
 const secondModal = document.querySelector('#modal2');
 
 // Tableaux "works" et "categories" vides utilisés pour stocker les données de l'API
 let works = []
 let categories = []
-let mainModalOpened = false;
+let mainModalOpened = false; // False = invisible
 let secondModalOpened = false;
 
 // Fonction fetch pour récupérer les projets
@@ -134,11 +136,12 @@ const createModalWorks = (works) => {
             deleteWork();
         });
 
+        // Fonction pour supprimer un projet
         const deleteWork = async() => {
             let token = sessionStorage.getItem('token');
             let id = work.id;
             let figureElementTrash = trashElement.closest('figure');
-            // closest = element le plus proche dans l'ascendance de l'élément
+            // closest = élément (ici 'figure') le plus proche dans l'ascendance de l'élément sélectionné (ici le trash)
 
             // appel de l'API pour l'id de chaque work
             const response = await fetch(`http://localhost:5678/api/works/${id}`, {
@@ -149,10 +152,12 @@ const createModalWorks = (works) => {
                     "Authorization": `Bearer ${token}`
                 }
             })
-            if (response.ok) {
+            console.log(response)
+
+            if (response.status === 204) {
                 figureElementTrash.remove();
                 galleryElement.innerHTML = "";
-                await getWorks();
+                updateUI()
             }
         }
 
@@ -162,7 +167,7 @@ const createModalWorks = (works) => {
         arrowsElement.appendChild(arrowsIcon);
         figureElement.appendChild(trashElement);
         figureElement.appendChild(arrowsElement);
-
+        
         mainModalGalleryElement.appendChild(figureElement);
     })
 }
@@ -181,6 +186,7 @@ const connected = () => {
     if (token) {
         editWorks.addEventListener('click', (e) => {
             e.preventDefault()
+            console.log(mainModalOpened)
             if (mainModalOpened) return
             mainModalOpened = true
             mainModal.style.display = "flex"
@@ -216,27 +222,36 @@ mainModal.querySelector('.modal1-add-button').addEventListener('click', () => {
     openSecondModal(secondModal)
 })
 
+// sélection de la flèche gauche pour le retour en modale 1
 secondModal.querySelector('.return-button').addEventListener('click', () => {
     returnMainModal(secondModal)
 })
 
-// selection de la croix pour la fermeture de la modale
+// selection de la croix pour la fermeture de la modale 1
 mainModal.querySelector('.close-button').addEventListener('click', () => {
     closeModal(mainModal)
 })
 
+// selection de la croix pour la fermeture de la modale 2
 secondModal.querySelector('.close-button').addEventListener('click', () => {
     closeModal(secondModal)
 })
 
+// fonction pour ouvrir la modale 2
 const openSecondModal = (modal) => {
+    if (secondModalOpened === true) return
+    secondModalOpened = true;
     mainModal.style.display = 'none';
     secondModal.style.display = 'flex';
-    modal.querySelector('.modal1-add-button').removeEventListener('click', () => openSecondModal(modal));
+    // modal.querySelector('.modal1-add-button').removeEventListener('click', () => openSecondModal(modal));
     modal.querySelector('.close-button').addEventListener('click', () => closeModal(modal));
 }
 
+// Fonction pour revenir à la modale 1
 const returnMainModal = () => {
+    if (!secondModalOpened) return
+    mainModalOpened = true;
+    secondModalOpened = false;
     secondModal.style.display = 'none';
     mainModal.style.display = 'flex';
 }
@@ -245,10 +260,25 @@ const returnMainModal = () => {
 const closeModal = (modal) => {
     if (modal.id === 'modal1') {
         if (!mainModalOpened) return
-        mainModalOpened = false
+        mainModalOpened = false;
+    }
+    if (modal.id === 'modal2') {
+        if(!secondModalOpened) return
+        mainModalOpened = false;
+        secondModalOpened = false;
     }
     modal.style.display = 'none';
     modal.querySelector('.close-button').removeEventListener('click', () => closeModal(modal))
+}
+
+// Fonction qui permet de mettre à jour l'interface utilisateur
+const updateUI = async() => {
+    // initialise le tableau 'works' vide
+    works = [];
+    // attendre que get works se termine
+    await getWorks()
+    // pour lancer 'createWorks' avec les données récupérées.
+    createWorks(works)
 }
 
 // Initialisation de la page
@@ -261,7 +291,7 @@ const init = async () => {
     createButtonFilter(categories);
     // faire appel à la fonction "connecté"
     connected();
-    // insérer les projets dans la modale
+    // insérer les projets dans la modale 1
     createModalWorks(works);
 }
 

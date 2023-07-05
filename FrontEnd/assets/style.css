@@ -336,7 +336,7 @@ i {
 	margin-bottom: 50px;
 }
 
-/****** Modal ******/
+/****** MODALE ******/
 
 .modal1,
 .modal2 {
@@ -489,6 +489,13 @@ i {
 	cursor: pointer;
 }
 
+
+/***** MODALE 2 *****/
+
+.form-add-work {
+	width: 420px;
+}
+
 .modal2-addimg {
 	display: flex;
 	flex-direction: column;
@@ -507,13 +514,19 @@ i {
 	margin-bottom: 15px;
 }
 
-.modal2-addimg p {
+.modal2-addimg .image-size {
 	font-family: 'Work Sans';
 	font-size: 12px;
 	font-weight: 400;
 }
 
-.add-image-button .img-add-button {
+.modal2-addimg .miniature {
+	width: auto;
+	max-height: 169px;
+	object-fit: cover;
+}
+
+.add-image-button .img-add-label {
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -538,7 +551,7 @@ i {
 #modal2-form {
 	display: flex;
 	flex-direction: column;
-	width: 420px;
+	width: 100%;
 	margin-bottom: 30px;
 }
 
@@ -553,7 +566,7 @@ i {
 #modal2-form label {
 	margin: 2em 0 1em 0;
 	font-size: 14px;
-	font-weight: 500px;
+	font-weight: 500;
 }
 
 .modal2-valid {
@@ -565,7 +578,7 @@ i {
 	padding: 20px;
 }
 
-.modal2-valid button {
+.modal2-valid .valid-button {
 	width: 237px;
 	height: 36px;
 	font-family: 'Work Sans';

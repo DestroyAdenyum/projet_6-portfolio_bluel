@@ -55,7 +55,7 @@
 			</div>
 
 			<!-- MODALE 1 -->
-			<aside id="modal1" class="modal1 modal1-off" aria-hidden="true" role="dialog">
+			<aside id="modal1" class="modal1 modal1-off">
 				<div class="modal1-wrapper">
 					<i class="fa-solid fa-xmark close-button"></i>
 					<h3>Galerie photo</h3>
@@ -68,28 +68,30 @@
 			</aside>
 
 			<!-- MODALE 2 -->
-			<aside id="modal2" class="modal2 modal2-off" aria-hidden="true" role="dialog">
+			<aside id="modal2" class="modal2 modal2-off">
 				<div class="modal2-wrapper">
 					<i class="fa-solid fa-xmark close-button"></i>
 					<i class="fa-solid fa-arrow-left return-button"></i>
 					<h3>Ajout photo</h3>
-					<div class="modal2-addimg">
-						<i class="fa-sharp fa-regular fa-image"></i>
-						<div class="add-image-button">
-							<label for="add-image" class="img-add-button">+ Ajouter photo</label>
-							<input type="file" accept="image/jpg image/png" id="add-image"></input>
+					<form id="form-add-work" action="#" method="post">
+						<div class="modal2-addimg">
+							<i class="fa-sharp fa-regular fa-image"></i>
+							<div class="add-image-button">
+								<label for="add-image" class="img-add-label">+ Ajouter photo</label>
+								<input type="file" accept="image/jpg,image/png" name="picture" id="add-image">
+							</div>
+							<p class="add-image-text">jpg, png: 4mo max</p>
 						</div>
-						<p>jpg, png: 4mo max</p>
-					</div>
-					<form id="modal2-form" action="#" method="post">
-						<label for="modal2-img-title">Titre</label>
-						<input type="text" name="title" id="modal2-img-title">
-						<label>Catégorie</label>
-						<select class="categoriesModal"></select>
+						<div id="modal2-form">
+							<label for="modal2-img-title">Titre</label>
+							<input type="text" name="title" id="modal2-img-title">
+							<label for="modal2-img-category">Catégorie</label>
+							<select class="category-select" name="category" id="modal2-img-category"></select>
+						</div>
 					</form>
-					<div class="modal2-valid">
-						<button>Valider</button>
-					</div>
+						<div class="modal2-valid">
+							<button class="valid-button">Valider</button>
+						</div>
 				</div>
 			</aside>
 
