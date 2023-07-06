@@ -35,10 +35,10 @@ formLoginElement.addEventListener('submit', async (event) => {
     // console.log(formEmail.value)
 
     const response = await login(data)
-    console.log(response)
+    // console.log(response)
 
     const user = await response.json()
-    console.log(user)
+    // console.log(user)
     
     if (user.token){
         sessionStorage.setItem('token', user.token);

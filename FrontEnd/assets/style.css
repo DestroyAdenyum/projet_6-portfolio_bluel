@@ -520,9 +520,13 @@ i {
 	font-weight: 400;
 }
 
-.modal2-addimg .miniature {
+#miniature-container {
+	height: 208px;
+}
+
+.miniature {
 	width: auto;
-	max-height: 169px;
+	height: 208px;
 	object-fit: cover;
 }
 
@@ -592,3 +596,7 @@ i {
 	margin-top: 20px;
 	cursor: pointer;
 }
+
+/* .valid-button-on {
+	background-color: #1D6154;
+} */

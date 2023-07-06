@@ -11,7 +11,9 @@ const secondModal = document.querySelector('#modal2');
 // Tableaux "works" et "categories" vides utilisés pour stocker les données de l'API
 let works = []
 let categories = []
-let mainModalOpened = false; // False = invisible
+
+// Variable pour savoir si la modale est ouverte ou non
+let mainModalOpened = false; // False = fermée
 let secondModalOpened = false;
 
 // Fonction fetch pour récupérer les projets
@@ -86,6 +88,31 @@ const createButtonFilter = (categories) => {
         createButton(button.id, button.name)
     });
 }
+
+// Nom des options selon l'id
+const selectOptionCategories = (id, name) => {
+    const selectElement = document.querySelector('.category-select')
+    const optionElement = document.createElement('option');
+
+    optionElement.value = id;
+    optionElement.textContent = name;
+    console.log(name)
+
+    if (id === 0) {
+    optionElement.innerHTML = '';
+    }
+    
+    selectElement.appendChild(optionElement);
+}
+
+// Créer les options du select à partir du tableau "categories"
+const categoriesModal = (categories) => {
+    selectOptionCategories(0,'')
+    categories.forEach(optionElement => {
+        selectOptionCategories(optionElement.id, optionElement.name)
+    })
+}
+
 
 // Création des éléments HTML des projets dynamiquement
 const createWorks = (works) => {
@@ -186,7 +213,6 @@ const connected = () => {
     if (token) {
         editWorks.addEventListener('click', (e) => {
             e.preventDefault()
-            console.log(mainModalOpened)
             if (mainModalOpened) return
             mainModalOpened = true
             mainModal.style.display = "flex"
@@ -217,24 +243,102 @@ const connected = () => {
     }
 }
 
+
+// MODALE 2 - POST
+const addImageInput = document.querySelector('#add-image');
+const addImageContainer = document.querySelector('.modal2-addimg');
+const addImageButton = document.querySelector('.add-image-button');
+const iconeImageElement = document.querySelector('.fa-image');
+const textImageElement = document.querySelector('.add-image-text');
+const titleFormElement = document.querySelector('#modal2-img-title');
+const categoryOptionElement = document.querySelector('modal2-img-category')
+const validButtonElement = document.querySelector('.valid-button');
+
+addImageInput.addEventListener('change', (e) => {
+    console.log(e.target.files[0])
+    const imageMaxSize = 4194304; // = 4Mo en octets
+  
+        if (e.target.files[0].size <= imageMaxSize) { // si la taille du fichier sélectionné est < ou = imageMaxSize
+            addImageButton.style.display = 'none';
+            addImageInput.style.display = 'none';
+            iconeImageElement.style.display = 'none';
+            textImageElement.style.display = 'none';
+
+            // création de la miniature
+            const miniatureContainer = document.createElement('div');
+            miniatureContainer.setAttribute('id', 'miniature-container')
+            const miniatureImage = document.createElement('img');
+            miniatureImage.classList.add('miniature');
+
+            //Source de l'image = une URL créée pour cette image
+            miniatureImage.src = URL.createObjectURL(e.target.files[0]);
+
+            miniatureContainer.appendChild(miniatureImage);
+            addImageContainer.appendChild(miniatureContainer);
+        } else {
+            // sinon création du message d'erreur
+            alert("La taille de l'image est supérieure à 4Mo")
+            // addImageInput.value = ""; // valeur de l'input remise à zéro
+        }
+})
+
+
+
+
+// // fonction pour le changement de couleur du bouton valider
+// const validationButtonChange = () => {
+//     if (image.value !== "" && title.value !== "" && category.value !== "") {
+//        validButtonElement.setAttribute('disabled', 'enabled');
+//        validButtonElement.classList.add('valid-button-on');
+//     } else {
+//        validButtonElement.setAttribute('disabled', 'disabled');
+//        validButtonElement.classList.remove('valid-button-on');
+
+//        titleFormElement.addEventListener('change', () => {
+//              if (titleFormElement.value === "") {
+//                  alert("Veuillez indiquer un titre")
+//              }
+//         })
+
+        // categoryOptionElement.addEventListener('change', () =>{
+        //     if (ca)
+        // })
+
+//     }
+// }
+
+// validationButtonChange.addEventListener('submit', (e) => {
+//      e.preventDefault;
+
+//     let token = sessionStorage.getItem('token');
+
+//     const file = addImageInput.file[0];
+
+//     const formData = new formData ();
+//     formData.append("image", file);
+//     formData.append("title", titleFormElement.value)
+//     formData.append("category", categoryOptionElement.value)
+
+
+//     const response = await fetch(`http://localhost:5678/api/works`, {
+//         method: "POST",
+//         headers: {
+//             "Authorization": `Bearer ${token}`
+//         },
+//         body: formData
+//     })
+// })
+
+
+
 // sélection du bouton "ajouter photo" pour ouverture de la modale 2
 mainModal.querySelector('.modal1-add-button').addEventListener('click', () => {
     openSecondModal(secondModal)
 })
 
-// sélection de la flèche gauche pour le retour en modale 1
-secondModal.querySelector('.return-button').addEventListener('click', () => {
-    returnMainModal(secondModal)
-})
-
 // selection de la croix pour la fermeture de la modale 1
 mainModal.querySelector('.close-button').addEventListener('click', () => {
     closeModal(mainModal)
-})
-
-// selection de la croix pour la fermeture de la modale 2
-secondModal.querySelector('.close-button').addEventListener('click', () => {
-    closeModal(secondModal)
 })
 
 // fonction pour ouvrir la modale 2
@@ -243,8 +347,8 @@ const openSecondModal = (modal) => {
     secondModalOpened = true;
     mainModal.style.display = 'none';
     secondModal.style.display = 'flex';
-    // modal.querySelector('.modal1-add-button').removeEventListener('click', () => openSecondModal(modal));
     modal.querySelector('.close-button').addEventListener('click', () => closeModal(modal));
+    modal.querySelector('.return-button').addEventListener('click', () => returnMainModal());
 }
 
 // Fonction pour revenir à la modale 1
@@ -254,6 +358,7 @@ const returnMainModal = () => {
     secondModalOpened = false;
     secondModal.style.display = 'none';
     mainModal.style.display = 'flex';
+    clearForm();
 }
 
 // fonction de fermeture de la modale
@@ -265,10 +370,26 @@ const closeModal = (modal) => {
     if (modal.id === 'modal2') {
         if(!secondModalOpened) return
         mainModalOpened = false;
-        secondModalOpened = false;
     }
     modal.style.display = 'none';
     modal.querySelector('.close-button').removeEventListener('click', () => closeModal(modal))
+    secondModalOpened = false;
+    clearForm();
+}
+
+const clearForm = () => {
+    const miniatureElement = document.querySelector('.miniature');
+    miniatureElement.remove();
+    document.querySelector('#add-image').type = "";
+    document.querySelector('#add-image').type = "file";
+
+    addImageButton.style.display = 'flex';
+    iconeImageElement.style.display = 'flex';
+    textImageElement.style.display = 'flex';
+
+    document.querySelector('#modal2-img-title').value = "";
+
+    // document.querySelector('#modal2-img-category');
 }
 
 // Fonction qui permet de mettre à jour l'interface utilisateur
@@ -293,6 +414,8 @@ const init = async () => {
     connected();
     // insérer les projets dans la modale 1
     createModalWorks(works);
+    // insérer les catégories dans la modale 2
+    categoriesModal(categories)
 }
 
 init()
