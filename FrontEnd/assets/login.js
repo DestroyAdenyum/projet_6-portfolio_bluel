@@ -1,14 +1,11 @@
 // Ciblage du formulaire
 const formLoginElement = document.querySelector('#login');
-// const formEmail = document.querySelector('#email');
 
 const login = async (data) => {
     const user = {
         email: data.get('email'),
         password: data.get('password')
     }
-
-    console.log(JSON.stringify(user))
 
     // effectue une requête POST vers l'URL pour effectuer une connexion
     return await fetch('http://localhost:5678/api/users/login', {
@@ -32,13 +29,10 @@ formLoginElement.addEventListener('submit', async (event) => {
 
     const data = new FormData(formLoginElement) 
     // permet de récupérer les valeurs du formulaire.
-    // console.log(formEmail.value)
 
     const response = await login(data)
-    // console.log(response)
 
     const user = await response.json()
-    // console.log(user)
     
     if (user.token){
         sessionStorage.setItem('token', user.token);

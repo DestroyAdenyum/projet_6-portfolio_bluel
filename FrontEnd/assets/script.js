@@ -1,4 +1,4 @@
-// Sélecteur de la div avec la classe "gallery"
+// Sélecteurs index
 const galleryElement = document.querySelector('.gallery');
 const buttonContainerElement = document.querySelector('.btns-container');
 
@@ -96,10 +96,9 @@ const selectOptionCategories = (id, name) => {
 
     optionElement.value = id;
     optionElement.textContent = name;
-    console.log(name)
 
     if (id === 0) {
-    optionElement.innerHTML = '';
+    optionElement.innerHTML = '- Sélectionner une catégorie -';
     }
     
     selectElement.appendChild(optionElement);
@@ -158,8 +157,6 @@ const createModalWorks = (works) => {
         figCaptionElement.textContent = 'éditer';
 
         trashElement.addEventListener('click', () => {
-            console.log('test', work.id)
-            // fonction de suppression, qui a probablement besoin de données comme l'id pour le delete en BDD
             deleteWork();
         });
 
@@ -179,7 +176,6 @@ const createModalWorks = (works) => {
                     "Authorization": `Bearer ${token}`
                 }
             })
-            console.log(response)
 
             if (response.status === 204) {
                 figureElementTrash.remove();
@@ -251,85 +247,91 @@ const addImageButton = document.querySelector('.add-image-button');
 const iconeImageElement = document.querySelector('.fa-image');
 const textImageElement = document.querySelector('.add-image-text');
 const titleFormElement = document.querySelector('#modal2-img-title');
-const categoryOptionElement = document.querySelector('modal2-img-category')
+const categoryFormElement = document.querySelector('#modal2-img-category')
+const categoryOptionElement = document.querySelector('.select-option')
 const validButtonElement = document.querySelector('.valid-button');
 
 addImageInput.addEventListener('change', (e) => {
-    console.log(e.target.files[0])
     const imageMaxSize = 4194304; // = 4Mo en octets
-  
-        if (e.target.files[0].size <= imageMaxSize) { // si la taille du fichier sélectionné est < ou = imageMaxSize
-            addImageButton.style.display = 'none';
-            addImageInput.style.display = 'none';
-            iconeImageElement.style.display = 'none';
-            textImageElement.style.display = 'none';
-
-            // création de la miniature
-            const miniatureContainer = document.createElement('div');
-            miniatureContainer.setAttribute('id', 'miniature-container')
-            const miniatureImage = document.createElement('img');
-            miniatureImage.classList.add('miniature');
-
-            //Source de l'image = une URL créée pour cette image
-            miniatureImage.src = URL.createObjectURL(e.target.files[0]);
-
-            miniatureContainer.appendChild(miniatureImage);
-            addImageContainer.appendChild(miniatureContainer);
-        } else {
-            // sinon création du message d'erreur
-            alert("La taille de l'image est supérieure à 4Mo")
-            // addImageInput.value = ""; // valeur de l'input remise à zéro
-        }
+    
+    if (e.target.files[0].size <= imageMaxSize) { // si la taille du fichier sélectionné est < ou = imageMaxSize
+        addImageButton.style.display = 'none';
+        addImageInput.style.display = 'none';
+        iconeImageElement.style.display = 'none';
+        textImageElement.style.display = 'none';
+        
+        // création de la miniature
+        const miniatureContainer = document.createElement('div');
+        miniatureContainer.setAttribute('id', 'miniature-container')
+        const miniatureImage = document.createElement('img');
+        miniatureImage.classList.add('miniature');
+        
+        //Source de l'image = une URL créée pour cette image
+        miniatureImage.src = URL.createObjectURL(e.target.files[0]);
+        
+        miniatureContainer.appendChild(miniatureImage);
+        addImageContainer.appendChild(miniatureContainer);
+    } else {
+        // sinon création du message d'erreur
+        alert("La taille de l'image est supérieure à 4Mo")
+        addImageInput.value = ""; // valeur de l'input remise à zéro
+    }
 })
 
+// fonction pour le changement de couleur du bouton valider
+const validationButtonChange = () => {
+    if (addImageInput.value !== "" && titleFormElement.value !== "" && categoryFormElement.value !== "0") {
+        validButtonElement.removeAttribute('disabled');
+        validButtonElement.classList.add('valid-button-green');
+    } else {
+        validButtonElement.setAttribute('disabled', 'disabled');
+        validButtonElement.classList.remove('valid-button-green');
+    }
+}
 
+// Ajout d'écouteurs d'évènement pour que le bouton "Valider" change et s'active.
+addImageInput.addEventListener('change', validationButtonChange);
+titleFormElement.addEventListener('input', validationButtonChange);
+categoryFormElement.addEventListener('change', validationButtonChange);
 
+// ajout d'écouteur d'évènement si on peut cliquer sur le bouton
+validButtonElement.addEventListener('click', (e) => {
+    e.preventDefault();
+    // lancer la fonction "newPost" avec les 3 paramètres du formulaire
+    newPost(addImageInput, titleFormElement, categoryFormElement);
+})
 
-// // fonction pour le changement de couleur du bouton valider
-// const validationButtonChange = () => {
-//     if (image.value !== "" && title.value !== "" && category.value !== "") {
-//        validButtonElement.setAttribute('disabled', 'enabled');
-//        validButtonElement.classList.add('valid-button-on');
-//     } else {
-//        validButtonElement.setAttribute('disabled', 'disabled');
-//        validButtonElement.classList.remove('valid-button-on');
+const newPost = async (addImageInput, titleFormElement, categoryFormElement) => {
+    let token = sessionStorage.getItem('token');
 
-//        titleFormElement.addEventListener('change', () => {
-//              if (titleFormElement.value === "") {
-//                  alert("Veuillez indiquer un titre")
-//              }
-//         })
+    const file = addImageInput.files[0];
+    const title = titleFormElement.value;
+    const category = categoryFormElement.value;
+    console.log(file, title, category)
 
-        // categoryOptionElement.addEventListener('change', () =>{
-        //     if (ca)
-        // })
+    const formData = new FormData();
+    formData.append("image", file);
+    formData.append("title", title);
+    formData.append("category", category);
 
-//     }
-// }
+    const response = await fetch(`http://localhost:5678/api/works`, {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+        },
+        body: formData,
+    });
 
-// validationButtonChange.addEventListener('submit', (e) => {
-//      e.preventDefault;
-
-//     let token = sessionStorage.getItem('token');
-
-//     const file = addImageInput.file[0];
-
-//     const formData = new formData ();
-//     formData.append("image", file);
-//     formData.append("title", titleFormElement.value)
-//     formData.append("category", categoryOptionElement.value)
-
-
-//     const response = await fetch(`http://localhost:5678/api/works`, {
-//         method: "POST",
-//         headers: {
-//             "Authorization": `Bearer ${token}`
-//         },
-//         body: formData
-//     })
-// })
-
-
+    if (response.ok) { // Statut 201 : Créé
+        console.log(response)
+        returnMainModal();
+        await getWorks();
+        mainModalGalleryElement.innerHTML = "";
+        createModalWorks(works);
+        galleryElement.innerHTML = "";
+        createWorks(works);
+    }
+}
 
 // sélection du bouton "ajouter photo" pour ouverture de la modale 2
 mainModal.querySelector('.modal1-add-button').addEventListener('click', () => {
@@ -372,24 +374,28 @@ const closeModal = (modal) => {
         mainModalOpened = false;
     }
     modal.style.display = 'none';
-    modal.querySelector('.close-button').removeEventListener('click', () => closeModal(modal))
+    modal.querySelector('.close-button').removeEventListener('click', () => closeModal(modal));
     secondModalOpened = false;
     clearForm();
 }
 
 const clearForm = () => {
     const miniatureElement = document.querySelector('.miniature');
-    miniatureElement.remove();
-    document.querySelector('#add-image').type = "";
-    document.querySelector('#add-image').type = "file";
+    if (miniatureElement !== null) {
+        miniatureElement.remove();
+        addImageInput.type = "";
+        addImageInput.type = "file";
+    }
 
     addImageButton.style.display = 'flex';
     iconeImageElement.style.display = 'flex';
     textImageElement.style.display = 'flex';
 
-    document.querySelector('#modal2-img-title').value = "";
+    titleFormElement.value = "";
 
-    // document.querySelector('#modal2-img-category');
+    categoryFormElement.value = "0";
+
+    validationButtonChange();
 }
 
 // Fonction qui permet de mettre à jour l'interface utilisateur

@@ -157,6 +157,7 @@ li a:hover {
 
 .gallery img {
 	width: 100%;
+	height: 520px;
 }
 
 /****** Ajout du formulaire de login *****/
@@ -594,9 +595,9 @@ i {
 	border: none;
 	margin-bottom: 10px;
 	margin-top: 20px;
-	cursor: pointer;
 }
 
-/* .valid-button-on {
+.modal2-valid .valid-button-green {
 	background-color: #1D6154;
-} */
+	cursor: pointer;
+}
