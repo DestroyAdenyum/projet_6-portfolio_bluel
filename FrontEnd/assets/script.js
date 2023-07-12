@@ -1,4 +1,4 @@
-// Sélecteurs index
+// Sélecteurs de la galerie
 const galleryElement = document.querySelector('.gallery');
 const buttonContainerElement = document.querySelector('.btns-container');
 
@@ -16,18 +16,15 @@ let categories = []
 let mainModalOpened = false; // False = fermée
 let secondModalOpened = false;
 
-// Fonction fetch pour récupérer les projets
+// Fonction asynchrone pour récupérer les données à partir de l'API
 const getWorks = async () => {
     await fetch("http://localhost:5678/api/works")
-    /* "await" est utilisé pour suspendre l'exécution de 
-    la fonction jusqu'à ce que la demande de récupération 
-    soit terminée et que la réponse soit reçue */
     .then(response => response.json())
     .then(dataProjects => works.push(...dataProjects))
     .catch(error => console.log(error))
 }
 
-// Fonction fetch pour appeler les catégories de projet
+// Fonction asynchrone pour les catégories
 const getCategories = async () => {
     await fetch("http://localhost:5678/api/categories")
     .then(response2 => response2.json())
@@ -39,10 +36,10 @@ const getCategories = async () => {
 const createButton = (id, name) => {
     const buttonElement = document.createElement('button');
     buttonElement.classList.add('btn');
-    // Texte du bouton = name (dans "category" de l'API)
     buttonElement.textContent = name;
-    // dataset (représente tous les attributs "data-*" d'un élément) = id (dans "category")
+    // Texte du bouton = name (dans "category" de l'API)
     buttonElement.dataset.id = id;
+    // dataset (représente tous les attributs "data-*" d'un élément) = id (dans "category")
 
     // Bouton actif pour "Tous" de base
     if (id === 0) {
@@ -81,8 +78,8 @@ const createButton = (id, name) => {
     buttonContainerElement.appendChild(buttonElement);
 }
 
-// Créer les différents bouton de filtre
-const createButtonFilter = (categories) => {
+// Créer les différents boutons de filtre
+const handleFilters = (categories) => {
     createButton(0, 'Tous')
     categories.forEach(button => {
         createButton(button.id, button.name)
@@ -322,14 +319,9 @@ const newPost = async (addImageInput, titleFormElement, categoryFormElement) => 
         body: formData,
     });
 
-    if (response.ok) { // Statut 201 : Créé
-        console.log(response)
+    if (response.status === 201) { // Statut 201 : Créé
+        await updateUI()
         returnMainModal();
-        await getWorks();
-        mainModalGalleryElement.innerHTML = "";
-        createModalWorks(works);
-        galleryElement.innerHTML = "";
-        createWorks(works);
     }
 }
 
@@ -401,11 +393,16 @@ const clearForm = () => {
 // Fonction qui permet de mettre à jour l'interface utilisateur
 const updateUI = async() => {
     // initialise le tableau 'works' vide
-    works = [];
+    works = []
     // attendre que get works se termine
-    await getWorks()
+    await getWorks();
+    // mise à jour de la galerie
+    galleryElement.innerHTML = "";
     // pour lancer 'createWorks' avec les données récupérées.
-    createWorks(works)
+    createWorks(works);
+    // même chose pour la galerie de la modale
+    mainModalGalleryElement.innerHTML = "";
+    createModalWorks(works);
 }
 
 // Initialisation de la page
@@ -413,9 +410,9 @@ const init = async () => {
     // Attend que 'getWorks' et 'getCategories' soient récupérés
     await getWorks();
     await getCategories();
-    // ensuite mettre les projets et les filtres en place,
+    // ensuite mettre les projets en place,
     createWorks(works);
-    createButtonFilter(categories);
+    handleFilters(categories);
     // faire appel à la fonction "connecté"
     connected();
     // insérer les projets dans la modale 1
